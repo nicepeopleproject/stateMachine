@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- State Machine Templates -->
+    <changeSet id="001-create-templates-table" author="system">
+        <createTable tableName="state_machine_templates">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="initial_state" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="state_machine_templates" indexName="idx_template_name">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Template States -->
+    <changeSet id="002-create-template-states-table" author="system">
+        <createTable tableName="template_states">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="template_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_state_template"
+                             references="state_machine_templates(id)" deleteCascade="true"/>
+            </column>
+            <column name="state_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state_type" type="varchar(50)" defaultValue="NORMAL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entry_actions" type="jsonb"/>
+            <column name="exit_actions" type="jsonb"/>
+            <column name="position_x" type="integer" defaultValue="0"/>
+            <column name="position_y" type="integer" defaultValue="0"/>
+        </createTable>
+        <createIndex tableName="template_states" indexName="idx_state_template">
+            <column name="template_id"/>
+        </createIndex>
+        <addUniqueConstraint tableName="template_states"
+                             columnNames="template_id, state_name"
+                             constraintName="uk_template_state_name"/>
+    </changeSet>
+
+    <!-- Template Transitions -->
+    <changeSet id="003-create-template-transitions-table" author="system">
+        <createTable tableName="template_transitions">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="template_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_transition_template"
+                             references="state_machine_templates(id)" deleteCascade="true"/>
+            </column>
+            <column name="source_state" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_state" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="guard_expression" type="text"/>
+            <column name="actions" type="jsonb"/>
+            <column name="order_index" type="integer" defaultValue="0"/>
+        </createTable>
+        <createIndex tableName="template_transitions" indexName="idx_transition_template">
+            <column name="template_id"/>
+        </createIndex>
+        <createIndex tableName="template_transitions" indexName="idx_transition_event">
+            <column name="event_name"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- State Machine Instances -->
+    <changeSet id="004-create-instances-table" author="system">
+        <createTable tableName="state_machine_instances">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="template_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_instance_template"
+                             references="state_machine_templates(id)"/>
+            </column>
+            <column name="project_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_state" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="context_data" type="jsonb"/>
+            <column name="status" type="varchar(50)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="state_machine_instances" indexName="idx_instance_project">
+            <column name="project_id"/>
+        </createIndex>
+        <createIndex tableName="state_machine_instances" indexName="idx_instance_template">
+            <column name="template_id"/>
+        </createIndex>
+        <createIndex tableName="state_machine_instances" indexName="idx_instance_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- State Machine History -->
+    <changeSet id="005-create-history-table" author="system">
+        <createTable tableName="state_machine_history">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="instance_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_history_instance"
+                             references="state_machine_instances(id)" deleteCascade="true"/>
+            </column>
+            <column name="from_state" type="varchar(100)"/>
+            <column name="to_state" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_name" type="varchar(100)"/>
+            <column name="event_data" type="jsonb"/>
+            <column name="transition_time" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex tableName="state_machine_history" indexName="idx_history_instance">
+            <column name="instance_id"/>
+        </createIndex>
+        <createIndex tableName="state_machine_history" indexName="idx_history_time">
+            <column name="transition_time"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

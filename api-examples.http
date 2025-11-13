@@ -1,0 +1,168 @@
+### State Machine Builder API Examples
+### Base URL: http://localhost:8080
+
+### 1. Create a new state machine template
+POST http://localhost:8080/api/templates
+Content-Type: application/json
+
+{
+  "name": "Order Processing Workflow",
+  "description": "Complete order processing from creation to delivery",
+  "initialState": "NEW",
+  "states": [
+    {
+      "stateName": "NEW",
+      "stateType": "INITIAL",
+      "positionX": 100,
+      "positionY": 100
+    },
+    {
+      "stateName": "PAYMENT_PENDING",
+      "stateType": "NORMAL",
+      "positionX": 300,
+      "positionY": 100
+    },
+    {
+      "stateName": "PROCESSING",
+      "stateType": "NORMAL",
+      "positionX": 500,
+      "positionY": 100
+    },
+    {
+      "stateName": "SHIPPED",
+      "stateType": "NORMAL",
+      "positionX": 700,
+      "positionY": 100
+    },
+    {
+      "stateName": "DELIVERED",
+      "stateType": "FINAL",
+      "positionX": 900,
+      "positionY": 100
+    },
+    {
+      "stateName": "CANCELLED",
+      "stateType": "FINAL",
+      "positionX": 500,
+      "positionY": 300
+    }
+  ],
+  "transitions": [
+    {
+      "sourceState": "NEW",
+      "targetState": "PAYMENT_PENDING",
+      "eventName": "SUBMIT_ORDER",
+      "orderIndex": 0
+    },
+    {
+      "sourceState": "PAYMENT_PENDING",
+      "targetState": "PROCESSING",
+      "eventName": "PAYMENT_CONFIRMED",
+      "orderIndex": 1
+    },
+    {
+      "sourceState": "PROCESSING",
+      "targetState": "SHIPPED",
+      "eventName": "SHIP_ORDER",
+      "orderIndex": 2
+    },
+    {
+      "sourceState": "SHIPPED",
+      "targetState": "DELIVERED",
+      "eventName": "CONFIRM_DELIVERY",
+      "orderIndex": 3
+    },
+    {
+      "sourceState": "NEW",
+      "targetState": "CANCELLED",
+      "eventName": "CANCEL",
+      "orderIndex": 4
+    },
+    {
+      "sourceState": "PAYMENT_PENDING",
+      "targetState": "CANCELLED",
+      "eventName": "CANCEL",
+      "orderIndex": 5
+    }
+  ]
+}
+
+### 2. Get all templates
+GET http://localhost:8080/api/templates
+
+### 3. Get template by ID (replace with actual UUID)
+GET http://localhost:8080/api/templates/550e8400-e29b-41d4-a716-446655440000
+
+### 4. Create an instance from template
+POST http://localhost:8080/api/instances?templateId=550e8400-e29b-41d4-a716-446655440000&projectId=order-12345
+
+### 5. Get instance by ID
+GET http://localhost:8080/api/instances/550e8400-e29b-41d4-a716-446655440001
+
+### 6. Get all instances for a project
+GET http://localhost:8080/api/instances/project/order-12345
+
+### 7. Send event to instance
+POST http://localhost:8080/api/instances/550e8400-e29b-41d4-a716-446655440001/event
+Content-Type: application/json
+
+{
+  "eventName": "SUBMIT_ORDER",
+  "eventData": {
+    "userId": "user-123",
+    "orderId": "order-12345",
+    "amount": 99.99,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+
+### 8. Get instance history
+GET http://localhost:8080/api/instances/550e8400-e29b-41d4-a716-446655440001/history
+
+### 9. Delete template
+DELETE http://localhost:8080/api/templates/550e8400-e29b-41d4-a716-446655440000
+
+### 10. Create simple workflow template
+POST http://localhost:8080/api/templates
+Content-Type: application/json
+
+{
+  "name": "Simple Approval Workflow",
+  "description": "Basic approval process",
+  "initialState": "DRAFT",
+  "states": [
+    {
+      "stateName": "DRAFT",
+      "stateType": "INITIAL"
+    },
+    {
+      "stateName": "PENDING_APPROVAL",
+      "stateType": "NORMAL"
+    },
+    {
+      "stateName": "APPROVED",
+      "stateType": "FINAL"
+    },
+    {
+      "stateName": "REJECTED",
+      "stateType": "FINAL"
+    }
+  ],
+  "transitions": [
+    {
+      "sourceState": "DRAFT",
+      "targetState": "PENDING_APPROVAL",
+      "eventName": "SUBMIT"
+    },
+    {
+      "sourceState": "PENDING_APPROVAL",
+      "targetState": "APPROVED",
+      "eventName": "APPROVE"
+    },
+    {
+      "sourceState": "PENDING_APPROVAL",
+      "targetState": "REJECTED",
+      "eventName": "REJECT"
+    }
+  ]
+}

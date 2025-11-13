@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State Machine Builder</title>
+    <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #cy {
+            flex: 1;
+            background: #fafafa;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .template-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .template-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .template-item:hover {
+            background: #e9ecef;
+        }
+
+        .template-item.active {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>State Machine Visual Builder</h1>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="section">
+                <h2>Template Info</h2>
+                <div class="form-group">
+                    <label>Template Name</label>
+                    <input type="text" id="templateName" placeholder="My State Machine">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="templateDescription" placeholder="Description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Initial State</label>
+                    <input type="text" id="initialState" placeholder="START">
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Add State</h2>
+                <div class="form-group">
+                    <label>State Name</label>
+                    <input type="text" id="stateName" placeholder="STATE_NAME">
+                </div>
+                <div class="form-group">
+                    <label>State Type</label>
+                    <select id="stateType">
+                        <option value="NORMAL">Normal</option>
+                        <option value="INITIAL">Initial</option>
+                        <option value="FINAL">Final</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="addState()">Add State</button>
+            </div>
+
+            <div class="section">
+                <h2>Add Transition</h2>
+                <div class="form-group">
+                    <label>From State</label>
+                    <input type="text" id="sourceState" placeholder="SOURCE">
+                </div>
+                <div class="form-group">
+                    <label>To State</label>
+                    <input type="text" id="targetState" placeholder="TARGET">
+                </div>
+                <div class="form-group">
+                    <label>Event Name</label>
+                    <input type="text" id="eventName" placeholder="EVENT_NAME">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="addTransition()">Add Transition</button>
+            </div>
+
+            <div class="section">
+                <h2>Actions</h2>
+                <button class="btn btn-success btn-block" onclick="saveTemplate()">Save Template</button>
+                <button class="btn btn-danger btn-block" onclick="clearCanvas()">Clear Canvas</button>
+                <button class="btn btn-primary btn-block" onclick="loadTemplates()">Load Templates</button>
+            </div>
+
+            <div class="section">
+                <h2>Saved Templates</h2>
+                <div id="templateList" class="template-list">
+                    <p style="text-align: center; color: #999;">No templates loaded</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="cy"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
