@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://loginScreen.caption"
+        messagesPack="com.company.statemachine.screen.login">
+    <layout>
+        <cssLayout height="100%"
+                   stylename="jmix-login-wrapper"
+                   width="100%">
+            <cssLayout stylename="jmix-login-container">
+                <cssLayout stylename="jmix-login-panel">
+                    <label id="logoImage"
+                           stylename="jmix-login-caption"/>
+                    <cssLayout stylename="jmix-login-form">
+                        <textField id="usernameField"
+                                   caption="msg://loginScreen.username"
+                                   width="100%"/>
+                        <passwordField id="passwordField"
+                                       caption="msg://loginScreen.password"
+                                       width="100%"/>
+                        <checkBox id="rememberMeCheckBox"
+                                  caption="msg://loginScreen.rememberMe"/>
+                        <hbox id="loginActionsBox"
+                              spacing="true"
+                              width="100%">
+                            <button id="submitBtn"
+                                    caption="msg://loginScreen.submit"/>
+                        </hbox>
+                    </cssLayout>
+                </cssLayout>
+            </cssLayout>
+        </cssLayout>
+    </layout>
+</window>

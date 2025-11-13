@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://com.company.statemachine.entity/Transition.edit"
+        focusComponent="form">
+    <data>
+        <instance id="transitionDc"
+                  class="com.company.statemachine.entity.Transition">
+            <fetchPlan extends="_base">
+                <property name="template" fetchPlan="_base"/>
+                <property name="fromState" fetchPlan="_base"/>
+                <property name="toState" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+        </instance>
+    </data>
+    <dialogMode height="600"
+                width="700"/>
+    <layout expand="scrollBox" spacing="true">
+        <scrollBox id="scrollBox" width="100%">
+            <form id="form" dataContainer="transitionDc">
+                <column width="500px">
+                    <entityPicker id="templateField" property="template">
+                        <actions>
+                            <action id="entityLookup" type="entity_lookup"/>
+                            <action id="entityClear" type="entity_clear"/>
+                        </actions>
+                    </entityPicker>
+                    <textField id="nameField" property="name"/>
+                    <entityPicker id="fromStateField" property="fromState">
+                        <actions>
+                            <action id="entityLookup" type="entity_lookup"/>
+                            <action id="entityClear" type="entity_clear"/>
+                        </actions>
+                    </entityPicker>
+                    <entityPicker id="toStateField" property="toState">
+                        <actions>
+                            <action id="entityLookup" type="entity_lookup"/>
+                            <action id="entityClear" type="entity_clear"/>
+                        </actions>
+                    </entityPicker>
+                    <textField id="eventNameField" property="eventName"/>
+                    <textArea id="conditionScriptField" property="conditionScript" rows="5" caption="msg://com.company.statemachine.entity/Transition.conditionScript"/>
+                    <textArea id="actionScriptField" property="actionScript" rows="5" caption="msg://com.company.statemachine.entity/Transition.actionScript"/>
+                </column>
+            </form>
+        </scrollBox>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

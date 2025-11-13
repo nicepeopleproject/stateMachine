@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:main="http://jmix.io/schema/ui/mainwindow"
+        caption="msg://application.caption"
+        messagesPack="com.company.statemachine.screen.main">
+    <dialogMode height="600"
+                width="800"/>
+    <layout>
+        <main:appWorkArea id="workArea">
+            <main:initialLayout>
+                <main:appMenu id="appMenu"/>
+            </main:initialLayout>
+        </main:appWorkArea>
+    </layout>
+</window>

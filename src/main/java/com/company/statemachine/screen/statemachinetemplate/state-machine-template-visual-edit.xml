@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://com.company.statemachine.entity/StateMachineTemplate.edit"
+        focusComponent="form">
+    <data>
+        <instance id="stateMachineTemplateDc"
+                  class="com.company.statemachine.entity.StateMachineTemplate">
+            <fetchPlan extends="_base">
+                <property name="states" fetchPlan="_base"/>
+                <property name="transitions" fetchPlan="_base">
+                    <property name="fromState" fetchPlan="_base"/>
+                    <property name="toState" fetchPlan="_base"/>
+                </property>
+            </fetchPlan>
+            <loader/>
+        </instance>
+        <collection id="statesDc" property="states"/>
+        <collection id="transitionsDc" property="transitions"/>
+    </data>
+    <dialogMode height="800"
+                width="1200"
+                resizable="true"/>
+    <layout expand="splitPanel" spacing="true">
+        <form id="form" dataContainer="stateMachineTemplateDc">
+            <column width="350px">
+                <textField id="nameField" property="name"/>
+                <textArea id="descriptionField" property="description" rows="2"/>
+                <checkBox id="activeField" property="active"/>
+            </column>
+        </form>
+        <splitPanel id="splitPanel" orientation="horizontal" width="100%" height="100%" splitPosition="50">
+            <vbox margin="true" spacing="true" height="100%">
+                <label value="Visual Diagram" stylename="h3"/>
+                <hbox spacing="true">
+                    <button id="refreshDiagramBtn" caption="Refresh Diagram"/>
+                </hbox>
+                <browserFrame id="diagramFrame" width="100%" height="100%"/>
+            </vbox>
+            <tabSheet id="tabSheet" width="100%" height="100%">
+                <tab id="statesTab" caption="msg://com.company.statemachine.entity/StateMachineTemplate.states" margin="true">
+                    <groupTable id="statesTable" dataContainer="statesDc" width="100%" height="100%">
+                        <actions>
+                            <action id="create" type="create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="edit" type="edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column id="name"/>
+                            <column id="stateKey"/>
+                            <column id="isFinal"/>
+                            <column id="positionX"/>
+                            <column id="positionY"/>
+                        </columns>
+                        <buttonsPanel>
+                            <button action="statesTable.create"/>
+                            <button action="statesTable.edit"/>
+                            <button action="statesTable.remove"/>
+                        </buttonsPanel>
+                    </groupTable>
+                </tab>
+                <tab id="transitionsTab" caption="msg://com.company.statemachine.entity/StateMachineTemplate.transitions" margin="true">
+                    <groupTable id="transitionsTable" dataContainer="transitionsDc" width="100%" height="100%">
+                        <actions>
+                            <action id="create" type="create">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="edit" type="edit">
+                                <properties>
+                                    <property name="openMode" value="DIALOG"/>
+                                </properties>
+                            </action>
+                            <action id="remove" type="remove"/>
+                        </actions>
+                        <columns>
+                            <column id="name"/>
+                            <column id="fromState"/>
+                            <column id="toState"/>
+                            <column id="eventName"/>
+                        </columns>
+                        <buttonsPanel>
+                            <button action="transitionsTable.create"/>
+                            <button action="transitionsTable.edit"/>
+                            <button action="transitionsTable.remove"/>
+                        </buttonsPanel>
+                    </groupTable>
+                </tab>
+            </tabSheet>
+        </splitPanel>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://jmix.io/schema/ui/menu">
+
+    <menu id="application" caption="msg://com.company.statemachine/menu.application">
+        <item screen="StateMachineTemplate.browse" caption="msg://com.company.statemachine.entity/StateMachineTemplate.browse"/>
+        <separator/>
+        <item screen="State.browse" caption="msg://com.company.statemachine.entity/State.browse"/>
+        <item screen="Transition.browse" caption="msg://com.company.statemachine.entity/Transition.browse"/>
+    </menu>
+
+</menu-config>

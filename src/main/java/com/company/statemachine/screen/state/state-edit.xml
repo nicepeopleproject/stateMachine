@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://com.company.statemachine.entity/State.edit"
+        focusComponent="form">
+    <data>
+        <instance id="stateDc"
+                  class="com.company.statemachine.entity.State">
+            <fetchPlan extends="_base">
+                <property name="template" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader/>
+        </instance>
+    </data>
+    <dialogMode height="500"
+                width="600"/>
+    <layout expand="form" spacing="true">
+        <form id="form" dataContainer="stateDc">
+            <column width="350px">
+                <entityPicker id="templateField" property="template">
+                    <actions>
+                        <action id="entityLookup" type="entity_lookup"/>
+                        <action id="entityClear" type="entity_clear"/>
+                    </actions>
+                </entityPicker>
+                <textField id="nameField" property="name"/>
+                <textField id="stateKeyField" property="stateKey"/>
+                <textArea id="descriptionField" property="description" rows="3"/>
+                <checkBox id="isFinalField" property="isFinal"/>
+                <hbox spacing="true">
+                    <textField id="positionXField" property="positionX"/>
+                    <textField id="positionYField" property="positionY"/>
+                </hbox>
+            </column>
+        </form>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>
