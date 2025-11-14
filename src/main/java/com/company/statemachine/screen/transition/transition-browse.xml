@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://com.company.statemachine.entity/Transition.browse"
+        focusComponent="transitionsTable">
+    <data readOnly="true">
+        <collection id="transitionsDc"
+                    class="com.company.statemachine.entity.Transition">
+            <fetchPlan extends="_base">
+                <property name="template" fetchPlan="_base"/>
+                <property name="fromState" fetchPlan="_base"/>
+                <property name="toState" fetchPlan="_base"/>
+            </fetchPlan>
+            <loader id="transitionsDl">
+                <query>
+                    <![CDATA[select e from Transition e order by e.name]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="transitionsTable" spacing="true">
+        <filter id="filter"
+                dataLoader="transitionsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="transitionsTable"
+                    width="100%"
+                    dataContainer="transitionsDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="template"/>
+                <column id="fromState"/>
+                <column id="toState"/>
+                <column id="eventName"/>
+            </columns>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="transitionsTable.create"/>
+                <button id="editBtn" action="transitionsTable.edit"/>
+                <button id="removeBtn" action="transitionsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

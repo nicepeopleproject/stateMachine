@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://com.company.statemachine.entity/StateMachineTemplate.edit"
+        focusComponent="form">
+    <data>
+        <instance id="stateMachineTemplateDc"
+                  class="com.company.statemachine.entity.StateMachineTemplate">
+            <fetchPlan extends="_base">
+                <property name="states" fetchPlan="_base"/>
+                <property name="transitions" fetchPlan="_base">
+                    <property name="fromState" fetchPlan="_base"/>
+                    <property name="toState" fetchPlan="_base"/>
+                </property>
+            </fetchPlan>
+            <loader/>
+        </instance>
+        <collection id="statesDc" property="states"/>
+        <collection id="transitionsDc" property="transitions"/>
+    </data>
+    <dialogMode height="600"
+                width="1000"
+                resizable="true"/>
+    <layout expand="tabSheet" spacing="true">
+        <form id="form" dataContainer="stateMachineTemplateDc">
+            <column width="350px">
+                <textField id="nameField" property="name"/>
+                <textArea id="descriptionField" property="description" rows="3"/>
+                <checkBox id="activeField" property="active"/>
+            </column>
+        </form>
+        <tabSheet id="tabSheet" width="100%">
+            <tab id="statesTab" caption="msg://com.company.statemachine.entity/StateMachineTemplate.states">
+                <groupTable id="statesTable" dataContainer="statesDc" width="100%">
+                    <actions>
+                        <action id="create" type="create">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="edit" type="edit">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="stateKey"/>
+                        <column id="isFinal"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="statesTable.create"/>
+                        <button action="statesTable.edit"/>
+                        <button action="statesTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
+            <tab id="transitionsTab" caption="msg://com.company.statemachine.entity/StateMachineTemplate.transitions">
+                <groupTable id="transitionsTable" dataContainer="transitionsDc" width="100%">
+                    <actions>
+                        <action id="create" type="create">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="edit" type="edit">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="fromState"/>
+                        <column id="toState"/>
+                        <column id="eventName"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="transitionsTable.create"/>
+                        <button action="transitionsTable.edit"/>
+                        <button action="transitionsTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
+        </tabSheet>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

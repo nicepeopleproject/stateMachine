@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            url 'https://nexus.jmix.io/repository/public'
+        }
+    }
+}
+
+rootProject.name = 'stateMachine'

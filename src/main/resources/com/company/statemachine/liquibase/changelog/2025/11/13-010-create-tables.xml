@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="1" author="statemachine">
+        <createTable tableName="STATE_MACHINE_TEMPLATE">
+            <column name="ID" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="CLOB"/>
+            <column name="INITIAL_STATE_ID" type="UUID"/>
+            <column name="ACTIVE" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="statemachine">
+        <createTable tableName="STATE">
+            <column name="ID" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STATE_KEY" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="CLOB"/>
+            <column name="TEMPLATE_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_FINAL" type="BOOLEAN"/>
+            <column name="POSITION_X" type="INT"/>
+            <column name="POSITION_Y" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="statemachine">
+        <createTable tableName="TRANSITION">
+            <column name="ID" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TEMPLATE_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FROM_STATE_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TO_STATE_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENT_NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONDITION_SCRIPT" type="CLOB"/>
+            <column name="ACTION_SCRIPT" type="CLOB"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="statemachine">
+        <addForeignKeyConstraint baseTableName="STATE"
+                                 baseColumnNames="TEMPLATE_ID"
+                                 constraintName="FK_STATE_ON_TEMPLATE"
+                                 referencedTableName="STATE_MACHINE_TEMPLATE"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="5" author="statemachine">
+        <addForeignKeyConstraint baseTableName="TRANSITION"
+                                 baseColumnNames="TEMPLATE_ID"
+                                 constraintName="FK_TRANSITION_ON_TEMPLATE"
+                                 referencedTableName="STATE_MACHINE_TEMPLATE"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="6" author="statemachine">
+        <addForeignKeyConstraint baseTableName="TRANSITION"
+                                 baseColumnNames="FROM_STATE_ID"
+                                 constraintName="FK_TRANSITION_ON_FROM_STATE"
+                                 referencedTableName="STATE"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="7" author="statemachine">
+        <addForeignKeyConstraint baseTableName="TRANSITION"
+                                 baseColumnNames="TO_STATE_ID"
+                                 constraintName="FK_TRANSITION_ON_TO_STATE"
+                                 referencedTableName="STATE"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="8" author="statemachine">
+        <createIndex tableName="STATE" indexName="IDX_STATE_TEMPLATE">
+            <column name="TEMPLATE_ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="9" author="statemachine">
+        <createIndex tableName="TRANSITION" indexName="IDX_TRANSITION_TEMPLATE">
+            <column name="TEMPLATE_ID"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
